@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlowLong</title>
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #fff;
+      color: #333;
+    }
+    .main-title {
+      font-family: 'Google Sans', sans-serif;
+      font-weight: 600;
+      font-size: 3rem;
+      line-height: 1.125;
+      color: #363636;
+    }
+    .container {
+      width: 90%;
+      max-width: 1500px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fff;
+    }
+    .header {
+      padding: 0;
+      margin-bottom: 20px;
+      background: none;
+      box-shadow: none;
+      text-align: center;
+    }
+    h1, h3 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    p {
+      margin: 15px 0;
+    }
+    .authors {
+      text-align: center;
+      font-style: italic;
+      margin-bottom: 40px;
+    }
+    .section {
+      text-align: center;
+      margin-bottom: 3em;
+      padding: 0.5em;
+      background-color: #ffffff;
+      border-radius: 1em;
+      box-shadow: 0 0 1em 0em rgba(0, 0, 0, 0.1);
+    }
+    .section-title {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    /* Publication buttons */
+    .publication-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    .pub-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      background-color: #4a4a4a;
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .pub-button:hover {
+      background-color: #5a5a5a;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    .pub-button i {
+      font-size: 18px;
+    }
+    /* Video grids */
+    .video-grid-two {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      padding: 20px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .video-grid-three {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 20px;
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+    /* 3-column comparison grid (Riflex / Ultravico / Ours) */
+    .comparison-grid-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px 18px;
+      padding: 12px 20px 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .col-label {
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      padding: 8px 0 4px;
+      color: #333;
+    }
+    .col-label.ours {
+      color: #7c3aed;
+    }
+    .col-label.ours .ours-pill {
+      background: linear-gradient(90deg, #4c1d95 0%, #a21caf 22%, #ec4899 48%, #f43f5e 72%, #ff3838 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .col-label .base-model {
+      display: block;
+      font-size: 14px;
+      font-weight: 400;
+      color: #777;
+      margin-top: 2px;
+      font-style: italic;
+    }
+    .video-item {
+      position: relative;
+    }
+    .video-item p {
+      display: block;
+      margin-bottom: 0.5em;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      border-radius: 0.5em;
+      box-shadow: 0 0 1em 0em rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      transition: outline 0.15s ease;
+      display: block;
+    }
+    /* Visual cue for the currently-unmuted video */
+    video.audio-active {
+      outline: 3px solid #1e90ff;
+      outline-offset: 2px;
+    }
+    /* Comparison-section videos have no audio — not clickable */
+    .no-audio-section video {
+      cursor: default;
+    }
+    /* 6-column comparison grid (autoregressive baselines) */
+    .comparison-grid-6col {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px 10px;
+      padding: 6px 12px 16px;
+      margin: 0 auto;
+    }
+    .comparison-grid-6col .col-label {
+      font-size: 16px;
+      padding: 6px 0 4px;
+    }
+    .comparison-grid-6col video {
+      border-radius: 0.35em;
+      box-shadow: 0 0 0.4em 0 rgba(0, 0, 0, 0.12);
+    }
+    /* Pagination controls for AR comparison */
+    .ar-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      margin: 18px auto 4px;
+    }
+    .ar-nav button {
+      font-size: 1.2rem;
+      padding: 8px 22px;
+      cursor: pointer;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+    .ar-nav button:hover:not(:disabled) {
+      background: #f0f0f0;
+    }
+    .ar-nav button:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    .ar-nav button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    #ar-page-indicator {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #444;
+      min-width: 160px;
+      text-align: center;
+    }
+    /* Prompt toggle (under each video / row) */
+    .prompt-wrap {
+      width: 100%;
+      margin-top: 8px;
+    }
+    .prompt-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: 8px;
+      padding: 7px 12px;
+      background: #f6f6f6;
+      border: 1px solid #e2e2e2;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .prompt-toggle:hover { background: #ececec; }
+    .prompt-toggle[aria-expanded="true"] {
+      background: #eaf2ff;
+      border-color: #b8d4ff;
+      color: #1e62d8;
+    }
+    .prompt-toggle .chevron { font-size: 11px; transition: transform 0.2s ease; }
+    .prompt-toggle[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+    .prompt-toggle .label {
+      flex: 1 1 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .prompt-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.2s ease, margin-top 0.2s ease;
+      margin-top: 0;
+      padding: 0 14px;
+      background: #fafafa;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: #333;
+      text-align: left;
+      white-space: pre-wrap;
+    }
+    .prompt-panel.open {
+      max-height: 800px;
+      margin-top: 6px;
+      padding: 12px 14px;
+      border-color: #e5e5e5;
+    }
+    /* Row-level prompt header in comparison grids (placed BELOW the row) */
+    .row-prompt-header {
+      grid-column: 1 / -1;
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+
+    /* Text-to-3DGS comparison: 4-column grid (2 pairs of Baseline|Ours per row) */
+    .gs-grid-4col {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px 18px;
+      padding: 12px 20px 20px;
+      max-width: 1500px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    /* Allow grid cells to shrink and force equal column widths */
+    .gs-grid-4col > * { min-width: 0; }
+    /* Videos are square (448x448 source) — set aspect so cell sizes even before metadata loads */
+    .gs-grid-4col .gs-video-wrap {
+      aspect-ratio: 1 / 1;
+    }
+    .gs-grid-4col .gs-video-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* Prompt header within Text-to-3DGS spans only its own pair (2 cols) */
+    .gs-grid-4col .row-prompt-header {
+      grid-column: span 2;
+    }
+    .gs-video-wrap {
+      position: relative;
+      width: 100%;
+    }
+    .gs-video-wrap video {
+      width: 100%;
+      display: block;
+    }
+    .frames-depleted-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(60, 60, 60, 0.55);
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      border-radius: 0.5em;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      text-align: center;
+      padding: 0 12px;
+    }
+    .gs-video-wrap.depleted .frames-depleted-overlay { opacity: 1; }
+    .frames-depleted-overlay::before {
+      content: "⏸";
+      margin-right: 8px;
+      font-size: 18px;
+    }
+
+    /* Mute/unmute status overlay — top-left corner of each video */
+    .audio-status {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 16px;
+      opacity: 0.5;
+      pointer-events: none;
+      transition: opacity 0.2s ease, background 0.2s ease;
+      z-index: 2;
+    }
+    .audio-status.unmuted {
+      background: rgba(30, 144, 255, 0.85);
+      opacity: 0.9;
+    }
+    .video-label {
+      width: 100%;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 0.4em;
+      color: #333;
+    }
+
+    .publication-authors {
+      font-family: 'Google Sans', sans-serif;
+      text-align: center;
+    }
+
+    .author-block {
+      font-size: 19px;
+      color: black;
+      padding: 0 5px;
+      display: inline-block;
+      font-weight: 500;
+    }
+    /* VGGT-Omega style: blue links, underline on hover */
+    .publication-authors a {
+      color: hsl(204, 86%, 53%);
+      text-decoration: none;
+    }
+    .publication-authors a:hover {
+      text-decoration: underline;
+    }
+
+    .title-highlight {
+      background: linear-gradient(90deg, #4c1d95 0%, #a21caf 22%, #ec4899 48%, #f43f5e 72%, #ff3838 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    mark {
+      background-color: #f0e68c;
+      color: #333;
+      padding: 2px 5px;
+      border-radius: 3px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .audio-hint {
+      font-size: 18px;
+      color: #555;
+      text-align: center;
+      margin: 0.5em 0 1.2em;
+    }
+    .audio-hint .kbd {
+      display: inline-block;
+      padding: 1px 8px;
+      border: 1px solid #bbb;
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      background: #f7f7f7;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+    .audio-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 6px;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1 class="main-title">
+        <span class="title-highlight">FlowLong</span>: Inference-time Long Video Generation<br>
+        via Manifold-constrained Tweedie Matching
+      </h1>
+      <br>
+
+      <div class="publication-authors">
+        <span class="author-block" style="font-size: 20px;">Anonymous Authors</span>
+      </div>
+      <div class="publication-authors" style="padding-top: 6px;">
+        <span class="author-block" style="font-size: 15px; color: #555;">Paper under double-blind review</span>
+      </div>
+
+    </div>
+
+    <p class="audio-hint">
+      <i class="fas fa-volume-up"></i> Videos are muted by default — <b>click any video to unmute</b> it (others auto-mute).
+      Press <span class="kbd">Enter</span> to pause or resume all videos.
+    </p>
+
+    <!-- Section: 30-second long-form audio-video generation -->
+    <div class="section" id="long-form-30s">
+      <div class="section-title">30-Second Long-form Audio-Video Generation</div>
+      <p style="width: 75%; text-align: center; font-size: 18px; margin: 0 auto 0.5em; color: #444;">
+        <mark>30-second</mark> videos with <mark>synchronized audio</mark>, from <b>LTX2</b>.
+        <br>
+        <span style="font-size: 15px; color: #666;">
+          Extending <b>LTX2</b>'s base 5-second generation budget by <b>×6</b>.
+        </span>
+      </p>
+
+      <div class="video-grid-two">
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ltx2/30s/0_high.jpg">
+            <source src="ltx2/30s/0_high.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ltx2/30s/1.jpg">
+            <source src="ltx2/30s/1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ltx2/30s/2.jpg">
+            <source src="ltx2/30s/2.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ltx2/30s/3.jpg">
+            <source src="ltx2/30s/3.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: 16-second audio-video samples -->
+    <div class="section" id="samples-16s">
+      <div class="section-title">16-Second Audio-Video Samples</div>
+      <p style="width: 75%; text-align: center; font-size: 18px; margin: 0 auto 0.5em; color: #444;">
+        Additional <mark>16-second</mark> samples with synchronized audio, from <b>LTX2</b>.
+        <br>
+        <span style="font-size: 15px; color: #666;">
+          Extending <b>LTX2</b>'s base 5-second generation budget by <b>×3</b>.
+        </span>
+      </p>
+
+      <div class="video-grid-three">
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ltx2/16s/ours0.jpg">
+            <source src="ltx2/16s/ours0.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ltx2/16s/ours1.jpg">
+            <source src="ltx2/16s/ours1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ltx2/16s/ours2.jpg">
+            <source src="ltx2/16s/ours2.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ltx2/16s/ours3.jpg">
+            <source src="ltx2/16s/ours3.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ltx2/16s/ours4.jpg">
+            <source src="ltx2/16s/ours4.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ltx2/16s/ours5.jpg">
+            <source src="ltx2/16s/ours5.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ltx2/16s/ours6.jpg">
+            <source src="ltx2/16s/ours6.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ltx2/16s/ours7.jpg">
+            <source src="ltx2/16s/ours7.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ltx2/16s/ours8.jpg">
+            <source src="ltx2/16s/ours8.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: 30-Second Long Video Samples (HunyuanVideo-1.5) -->
+    <div class="section no-audio-section" id="samples-hunyuan-30s">
+      <div class="section-title">30-Second Long Video Samples</div>
+      <p style="width: 75%; text-align: center; font-size: 18px; margin: 0 auto 0.5em; color: #444;">
+        <mark>30-second</mark> videos from <b>HunyuanVideo-1.5</b>.
+        <br>
+        <span style="font-size: 15px; color: #666;">
+          Extending <b>HunyuanVideo-1.5</b>'s base 5-second generation budget by <b>×6</b>.
+        </span>
+      </p>
+
+      <div class="video-grid-three">
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="HunyuanVideo-1.5/hunyuan_1.jpg">
+            <source src="HunyuanVideo-1.5/hunyuan_1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="HunyuanVideo-1.5/hunyuan_2.jpg">
+            <source src="HunyuanVideo-1.5/hunyuan_2.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="HunyuanVideo-1.5/hunyuan_3.jpg">
+            <source src="HunyuanVideo-1.5/hunyuan_3.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="HunyuanVideo-1.5/hunyuan_4.jpg">
+            <source src="HunyuanVideo-1.5/hunyuan_4.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="HunyuanVideo-1.5/hunyuan_5.jpg">
+            <source src="HunyuanVideo-1.5/hunyuan_5.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="HunyuanVideo-1.5/hunyuan_6.jpg">
+            <source src="HunyuanVideo-1.5/hunyuan_6.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: Comparison with Bidirectional Models -->
+    <div class="section no-audio-section" id="comparison-bidirectional">
+      <div class="section-title">Comparison with Bidirectional Models</div>
+      <p style="width: 80%; text-align: center; font-size: 18px; margin: 0 auto 0.5em; color: #444;">
+        30-second generation against bidirectional long-video baselines (<b>RIFLEx</b>, <b>UltraVico</b>) on the same prompts.
+        <br>
+        <span style="font-size: 15px; color: #666;">
+          RIFLEx is built on <b>CogVideoX (5B)</b>; UltraVico and FlowLong (Ours) both use <b>Wan2.1 (1.3B)</b>.
+        </span>
+      </p>
+
+      <div class="comparison-grid-3col">
+        <!-- Column headers -->
+        <div class="col-label">RIFLEx<span class="base-model">CogVideoX (5B)</span></div>
+        <div class="col-label">UltraVico<span class="base-model">Wan2.1 (1.3B)</span></div>
+        <div class="col-label ours"><span class="ours-pill">FlowLong</span> (Ours)<span class="base-model">Wan2.1 (1.3B)</span></div>
+
+        <!-- Row 1: prompt 01 — skeleton dancing -->
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/riflex/000.jpg">
+            <source src="baseline_comparison/riflex/000.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/ultravico/000.jpg">
+            <source src="baseline_comparison/ultravico/000.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/ours/01/video_low.jpg">
+            <source src="baseline_comparison/ours/01/video_low.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <!-- Row 2: prompt 02 — longboarder -->
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/riflex/001.jpg">
+            <source src="baseline_comparison/riflex/001.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/ultravico/001.jpg">
+            <source src="baseline_comparison/ultravico/001.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/ours/02/video_low.jpg">
+            <source src="baseline_comparison/ours/02/video_low.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <!-- Row 3: prompt 04 — kangaroo -->
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/riflex/003.jpg">
+            <source src="baseline_comparison/riflex/003.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/ultravico/003.jpg">
+            <source src="baseline_comparison/ultravico/003.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/ours/04/video_low.jpg">
+            <source src="baseline_comparison/ours/04/video_low.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <!-- Row 4: prompt 05 — cheetah -->
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/riflex/004.jpg">
+            <source src="baseline_comparison/riflex/004.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/ultravico/004.jpg">
+            <source src="baseline_comparison/ultravico/004.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/ours/05/video_low.jpg">
+            <source src="baseline_comparison/ours/05/video_low.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: Comparison with Autoregressive Models -->
+    <div class="section no-audio-section" id="comparison-autoregressive">
+      <div class="section-title">Comparison with Autoregressive Models</div>
+      <p style="width: 80%; text-align: center; font-size: 18px; margin: 0 auto 0.5em; color: #444;">
+        30-second generation against autoregressive long-video baselines on 10 diverse prompts.
+        <br>
+        <span style="font-size: 15px; color: #666;">
+          All baselines and FlowLong (Ours) are built on <b>Wan2.1 (1.3B)</b>.
+        </span>
+      </p>
+
+      <div class="comparison-grid-6col" id="ar-grid">
+        <!-- Column headers -->
+        <div class="col-label">CausVid</div>
+        <div class="col-label">Self-Forcing</div>
+        <div class="col-label">Deep-Forcing</div>
+        <div class="col-label">LongLive</div>
+        <div class="col-label">Infinity-RoPE</div>
+        <div class="col-label ours"><span class="ours-pill">FlowLong</span> (Ours)</div>
+        <!-- video items injected/replaced by renderArPage(pageIdx) -->
+      </div>
+
+      <div class="ar-nav">
+        <button id="ar-prev" type="button" aria-label="Previous prompts">‹ Prev</button>
+        <span id="ar-page-indicator">Prompts 1–4 of 10</span>
+        <button id="ar-next" type="button" aria-label="Next prompts">Next ›</button>
+      </div>
+    </div>
+
+    <!-- Section: Application — Long Text-to-3D Gaussian Splatting -->
+    <div class="section no-audio-section" id="application-3dgs">
+      <div class="section-title">Application: Long Text-to-3D Gaussian Splatting</div>
+      <p style="width: 80%; text-align: center; font-size: 18px; margin: 0 auto 0.5em; color: #444;">
+        FlowLong's long-generation idea applied to text-to-3DGS: <b>VIST3A</b> runs out of frames mid-trajectory while <b>FlowLong (Ours)</b> continues seamlessly.
+      </p>
+
+      <div class="gs-grid-4col" id="gs-grid">
+        <!-- Column headers (repeat for each pair-column) -->
+        <div class="col-label">VIST3A</div>
+        <div class="col-label ours"><span class="ours-pill">FlowLong</span> (Ours)</div>
+        <div class="col-label">VIST3A</div>
+        <div class="col-label ours"><span class="ours-pill">FlowLong</span> (Ours)</div>
+
+        <!-- Pair 1 (prompt 08) -->
+        <div class="gs-video-wrap" data-gs-role="baseline" data-gs-pair="08">
+          <video muted playsinline preload="none" poster="text_to_3dgs/prompt_08_baseline.jpg">
+            <source src="text_to_3dgs/prompt_08_baseline.mp4" type="video/mp4">
+          </video>
+          <div class="frames-depleted-overlay">Out of frames</div>
+        </div>
+        <div class="gs-video-wrap" data-gs-role="ours" data-gs-pair="08">
+          <video muted playsinline preload="none" poster="text_to_3dgs/prompt_08_ours.jpg">
+            <source src="text_to_3dgs/prompt_08_ours.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <!-- Pair 2 (prompt 09) -->
+        <div class="gs-video-wrap" data-gs-role="baseline" data-gs-pair="09">
+          <video muted playsinline preload="none" poster="text_to_3dgs/prompt_09_baseline.jpg">
+            <source src="text_to_3dgs/prompt_09_baseline.mp4" type="video/mp4">
+          </video>
+          <div class="frames-depleted-overlay">Out of frames</div>
+        </div>
+        <div class="gs-video-wrap" data-gs-role="ours" data-gs-pair="09">
+          <video muted playsinline preload="none" poster="text_to_3dgs/prompt_09_ours.jpg">
+            <source src="text_to_3dgs/prompt_09_ours.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <!-- Pair 3 (prompt 12) -->
+        <div class="gs-video-wrap" data-gs-role="baseline" data-gs-pair="12">
+          <video muted playsinline preload="none" poster="text_to_3dgs/prompt_12_baseline.jpg">
+            <source src="text_to_3dgs/prompt_12_baseline.mp4" type="video/mp4">
+          </video>
+          <div class="frames-depleted-overlay">Out of frames</div>
+        </div>
+        <div class="gs-video-wrap" data-gs-role="ours" data-gs-pair="12">
+          <video muted playsinline preload="none" poster="text_to_3dgs/prompt_12_ours.jpg">
+            <source src="text_to_3dgs/prompt_12_ours.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <!-- Pair 4 (prompt 13) -->
+        <div class="gs-video-wrap" data-gs-role="baseline" data-gs-pair="13">
+          <video muted playsinline preload="none" poster="text_to_3dgs/prompt_13_baseline.jpg">
+            <source src="text_to_3dgs/prompt_13_baseline.mp4" type="video/mp4">
+          </video>
+          <div class="frames-depleted-overlay">Out of frames</div>
+        </div>
+        <div class="gs-video-wrap" data-gs-role="ours" data-gs-pair="13">
+          <video muted playsinline preload="none" poster="text_to_3dgs/prompt_13_ours.jpg">
+            <source src="text_to_3dgs/prompt_13_ours.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <br><br>
+  </div>
+
+  <script>
+    // ────────────────────────────────────────────────────────────────
+    // Feature flags — flip these to revert behavior easily.
+    // ────────────────────────────────────────────────────────────────
+    // When true: ALL videos (not just AR comparison) pause when scrolled
+    // out of viewport and resume when back in view. Big perf win.
+    // When false: only AR comparison videos are lazy; the rest autoplay
+    // continuously like before.
+    const PAUSE_OFFSCREEN_VIDEOS = true;
+
+    // ── Enter to pause/resume all videos ──────────────────────────────
+    let videosPlaying = true;
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        const videos = document.querySelectorAll("video");
+        if (videosPlaying) {
+          videos.forEach(v => v.pause());
+          videosPlaying = false;
+        } else {
+          videos.forEach(v => v.play());
+          videosPlaying = true;
+        }
+      }
+    });
+
+    // ── Autoregressive comparison: paginated render with memory-clean unmount ──
+    const AR_MODELS = [
+      i => `baseline_comparison/causvid/long_video_output_00${i}.mp4`,
+      i => `baseline_comparison/selfforcing/${i}-0_ema.mp4`,
+      i => `baseline_comparison/deepforcing/${i}-0_ema.mp4`,
+      i => `baseline_comparison/longlive/rank0-${i}-0_lora.mp4`,
+      i => `baseline_comparison/infinityrope/${i}-0_ema.mp4`,
+      i => `baseline_comparison/ours/${String(i + 1).padStart(2, "0")}/video_low.mp4`,
+    ];
+    // 0-indexed prompt indices grouped into carousel pages (display nums 1-10)
+    const AR_PAGES = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9]];
+    let arCurrentPage = 0;
+    let lazyObserver = null; // assigned by lazyAutoplay below
+
+    // ── Prompt data ───────────────────────────────────────────────────
+    // Showcase: each video gets its own prompt (keyed by source path).
+    const SHOWCASE_PROMPTS = {
+      "ltx2/30s/0_high.mp4": `A mountain biker descending a winding singletrack through a redwood forest. He wears a full-face helmet and body armor, hands gripping the handlebars firmly as the bike pumps over roots and small drops. The rear wheel kicks up loose dirt and leaf litter. Towering redwoods surround the trail, their bases mossy and damp. Shafts of green-gold light filter through the canopy. The trail flows continuously without flat sections. A dynamic chase tracking shot from a drone weaving through trunks behind the rider. Sound: crunch of tires over dirt and roots, suspension compressing and rebounding, chain bouncing on chainstays, fast breathing inside the helmet, wind in trees overhead, distant creek somewhere below.`,
+      "ltx2/30s/1.mp4": `A drummer driving a rock song behind a full kit on a smoke-lit stage. He wears a black tank top, sweat dripping from his hair as his sticks blur across snare and toms. His foot kicks the bass drum in a steady pulse, hi-hat sizzling between hits. Stage lights pulse blue and red, and haze drifts across the cymbals catching the beams. Cables snake across the stage floor. He keeps a relentless rhythm without pause. A medium tracking shot orbiting slowly clockwise around the kit at chest height. Sound: punching kick drum, sharp snare backbeats, hi-hat sizzle, cymbal crashes ringing, sticks rebounding on rims, distant crowd roar muffled through stage monitors, sweat drops hitting the floor tom.`,
+      "ltx2/30s/2.mp4": `A wolf trotting steadily through a snow-covered boreal forest. Its thick grey fur is dusted with snowflakes, and its breath forms white clouds in the cold air. Its paws crunch through the fresh snow in an even rhythm. Tall dark spruce trees line both sides of the trail, their branches heavy with snow. The light is pale and diffused through an overcast winter sky. The wolf moves with tireless purpose, eyes forward. A tracking shot following from the side at a steady pace. Sound: rhythmic crunching of paws in deep snow, wolf panting with visible breath, light snowfall hitting branches, wind sighing through the spruce canopy, distant crack of a frozen branch, faint howl from far away.`,
+      "ltx2/30s/3.mp4": `A lone cyclist pedaling steadily along a coastal highway with the ocean stretching to the horizon on one side. He wears a bright yellow jersey and leans forward on his road bike, legs spinning in a constant cadence. The road curves gently along the clifftop, with crashing waves visible below. Dry golden grass covers the hillside on the other side of the road. Strong sunlight casts his shadow on the asphalt. A tracking shot from a vehicle following alongside. Sound: steady whir of bicycle chain and gears, tires humming on smooth asphalt, wind rushing past the rider, ocean waves crashing on rocks below, seagulls calling overhead, rhythmic breathing.`,
+      "ltx2/16s/ours0.mp4": `A cinematic scene from a classic western movie, featuring a rugged man riding a powerful horse through the vast Gobi Desert at sunset. The man, dressed in a dusty cowboy hat and a worn leather jacket, reins tightly on the horse's neck as he gallops across the golden sands. The sun sets dramatically behind them, casting long shadows and warm hues across the landscape. The background is filled with rolling dunes and sparse, rocky outcrops, emphasizing the harsh beauty of the desert. A dynamic wide shot from a low angle, capturing both the man and the expansive desert vista. Sound: rhythmic hoofbeats on sand, dry desert wind, occasional creak of leather saddle.`,
+      "ltx2/16s/ours1.mp4": `A handheld camera captures a dog running through a park with a joyful exploration, the camera following the dog closely and bouncing and tilting with its movements. The dog bounds through the grass, tail wagging excitedly, sniffing at flowers and chasing after butterflies. Its fur glistens in the sunlight, and its eyes sparkle with enthusiasm. The park is filled with trees and colorful blooms, and the background shows a blurred path leading into the distance. The camera angle changes dynamically, providing a sense of the dog's lively energy and the vibrant environment around it. Sound: happy panting and playful barking, paws rustling through grass, birds chirping, light breeze through the trees.`,
+      "ltx2/16s/ours2.mp4": `A handheld shot following a young child running through a field of tall grass, capturing the spontaneity and playfulness of their movements. The child has curly brown hair and a mischievous smile, arms swinging freely as they sprint across the green expanse. Their small feet kick up bits of grass and dirt, creating a trail behind them. The background features a blurred landscape with rolling hills and scattered wildflowers, bathed in warm sunlight. The photo has a natural, documentary-style quality, emphasizing the dynamic motion and joy of the moment. A dynamic handheld shot from a slightly elevated angle, following the child's energetic run. Sound: child laughing and squealing with delight, feet swishing through tall grass, gentle wind, distant nature ambiance.`,
+      "ltx2/16s/ours3.mp4": `An action shot of a cheetah in its natural habitat, sprinting at full speed while chasing its prey across the savanna. The cheetah's golden fur glistens under the bright African sun, and its muscular body is stretched out in a powerful run. Its sharp eyes focus intently on the fleeing antelope, and its distinctive black tear marks streak down its face. The background is a blurred landscape with tall grass swaying in the wind, and distant acacia trees. The cheetah's tail is raised high, and its paws leave deep prints in the soft earth. A dynamic mid-shot capturing the intense moment of pursuit. Sound: rapid pounding of paws on dry savanna earth, wind rushing, dry grass rustling intensely, distant thudding of fleeing hooves.`,
+      "ltx2/16s/ours4.mp4": `A dynamic tracking shot following a skateboarder performing a series of fluid tricks down a bustling city street. The skateboarder, wearing a black helmet and a colorful shirt, moves with grace and confidence, executing flips, grinds, and spins. The camera captures the skateboarder's fluid movements, capturing the essence of each trick with precision. The background showcases the urban environment, with tall buildings, busy traffic, and passersby in the distance. The lighting highlights the skateboarder's movements, creating a sense of speed and energy. The overall style is reminiscent of a skateboarding documentary, emphasizing the natural and dynamic nature of the tricks. Sound: board clacking and flipping on concrete, grinding along a metal rail, urban traffic hum, onlookers reacting in the background.`,
+      "ltx2/16s/ours5.mp4": `A large brown bear walking along a shallow salmon stream in Alaska, splashing through the water with heavy deliberate steps. Water sprays from its thick fur with each stride. The stream bed is rocky and surrounded by dense green forest. Other bears are visible far upstream, also wading. The overcast sky provides flat even light across the scene. A wide tracking shot following the bear from the riverbank. Sound: heavy splashing footsteps in shallow water, rushing stream current over rocks, bear snorting and breathing heavily, distant bear growls upstream, water dripping from fur, wind through spruce trees.`,
+      "ltx2/16s/ours6.mp4": `A horse cantering across a wide open meadow in the Swiss Alps, rider sitting deep in the saddle with a steady posting rhythm. The horse's mane flows with each stride, and its hooves throw up bits of grass and wildflowers. Snow-capped mountain peaks form a dramatic backdrop under a clear blue sky. The meadow is dotted with yellow and purple wildflowers. The rider wears a simple jacket and rides with relaxed confidence. A wide tracking shot from the side keeping pace with the canter. Sound: three-beat canter rhythm of hooves on soft ground, leather saddle creaking, horse snorting rhythmically with exertion, rider's jacket flapping in the wind, meadow grass swishing against the horse's legs, cowbells ringing from a distant alpine pasture.`,
+      "ltx2/16s/ours7.mp4": `A street musician playing the violin on a cobblestone sidewalk in Paris during autumn. Fallen golden leaves scatter around his feet as pedestrians walk past. He stands next to an open violin case with a few coins inside, his bow moving passionately across the strings. He wears a long wool coat and a beret, his eyes closed in concentration. The Eiffel Tower is faintly visible in the distant background through the tree-lined boulevard. A wide tracking shot slowly moving around the musician. Sound: soaring violin melody with vibrato, bow scraping across strings, footsteps of passersby on cobblestone, rustling autumn leaves, distant city traffic.`,
+      "ltx2/16s/ours8.mp4": `A snowboarder carving wide turns down an open powder slope in the Alps. She wears a red shell jacket and goggles, her board kicking up plumes of fresh snow with each edge transition. Her body leans into each turn rhythmically, weight shifting heel to toe. The slope is bordered by dense fir trees laden with snow, and the sun casts crisp shadows across the white expanse. Snow crystals drift in the air behind her. Distant peaks rise above the tree line. A handheld tracking shot from a vehicle on a parallel piste keeping pace with her descent. Sound: hiss of edges cutting fresh powder, whump of compressed snow under each turn, wind rushing past goggles, jacket fabric flapping, distant chairlift hum, snow crystals tinkling against branches.`,
+
+      // HunyuanVideo-1.5 30-second samples
+      "HunyuanVideo-1.5/hunyuan_1.mp4": `A dramatic post-apocalyptic scene in the style of a horror film, featuring a skeleton wearing a colorful flower hat and oversized sunglasses dancing wildly in a sunlit meadow at sunset. The skeleton has a weathered and somewhat decayed appearance, with bones visible. The dance is energetic and almost comical, with exaggerated movements. The background is a vivid blend of warm oranges and pinks, with tall grasses and wildflowers swaying in the breeze. The sky is painted with rich hues of orange and pink, casting long shadows across the landscape. A dynamic medium shot from a low angle, capturing the skeleton's animated dance.`,
+      "HunyuanVideo-1.5/hunyuan_2.mp4": `An adorable kangaroo, dressed in a cute green dress with polka dots, is wearing a small sun hat perched on its head. The kangaroo takes a pleasant stroll through the bustling streets of Mumbai during a vibrant and colorful festival. The background is filled with lively festival-goers in traditional Indian attire, adorned with intricate henna designs and bright jewelry. The scene is filled with colorful decorations, vendors selling various items, and people dancing and singing. The kangaroo moves gracefully, hopping along the cobblestone streets, its tail swinging behind it. The camera angle captures the kangaroo from a slight overhead perspective, highlighting its joyful expression and the festive atmosphere. A medium shot with dynamic movement.`,
+      "HunyuanVideo-1.5/hunyuan_3.mp4": `A dynamic action shot in the style of a professional skateboard magazine, featuring a young male longboarder accelerating downhill. He is fully focused, his expression intense and determined, carving through tight turns with precision. His longboard glides smoothly over the pavement, creating a blur of motion. He wears a black longboard shirt, blue jeans, and white sneakers, with a backpack slung over one shoulder. His hair flows behind him as he moves, and he grips the board tightly with both hands. The background shows a scenic urban street with blurred buildings and trees, hinting at a lively cityscape. The photo captures the moment just after he exits a turn, with a slight bounce in the board and a sense of speed and agility. A medium shot with a slightly elevated camera angle.`,
+      "HunyuanVideo-1.5/hunyuan_4.mp4": `A cinematic scene from a classic western movie, featuring a rugged man riding a powerful horse through the vast Gobi Desert at sunset. The man, dressed in a dusty cowboy hat and a worn leather jacket, reins tightly on the horse's neck as he gallops across the golden sands. The sun sets dramatically behind them, casting long shadows and warm hues across the landscape. The background is filled with rolling dunes and sparse, rocky outcrops, emphasizing the harsh beauty of the desert. A dynamic wide shot from a low angle, capturing both the man and the expansive desert vista.`,
+      "HunyuanVideo-1.5/hunyuan_5.mp4": `A flamenco dancer stamping and turning in a continuous rhythmic pattern on a wooden stage. She wears a fitted black dress with a ruffled red train that swirls with each spin. Her heels strike the wooden floor in rapid staccato bursts, and her arms sweep upward in controlled arcs. Her expression is fierce and focused. A single warm spotlight follows her on the otherwise dark stage. Sweat glistens on her brow as she maintains the relentless rhythm. A medium shot capturing her full body and the swirling dress. Sound: rapid heel stamps on hollow wooden stage, sharp staccato footwork patterns, dress fabric whooshing through air, finger snaps between phrases, heavy breathing through the nose, wooden stage resonating and booming under the strikes, faint echo in the performance space.`,
+      "HunyuanVideo-1.5/hunyuan_6.mp4": `A young woman jogging steadily along a tree-lined riverside path in early morning light. She wears a grey hoodie and black leggings, her ponytail swinging rhythmically with each stride. Her sneakers hit the damp pavement in a steady cadence. The river flows calmly beside her, and morning fog hovers low over the water. Tall willows line both sides of the path, their branches swaying gently. A handheld tracking shot following her from the side. Sound: steady rhythmic footfalls on wet pavement, controlled breathing in and out, river water flowing, birds singing in the willows, distant splash of a fish, rustling leaves in the morning breeze.`,
+    };
+
+    // Comparison prompts (0-indexed). Display num = index + 1.
+    const COMPARISON_PROMPTS = [
+      `A dramatic post-apocalyptic scene in the style of a horror film, featuring a skeleton wearing a colorful flower hat and oversized sunglasses dancing wildly in a sunlit meadow at sunset. The skeleton has a weathered and somewhat decayed appearance, with bones visible. The dance is energetic and almost comical, with exaggerated movements. The background is a vivid blend of warm oranges and pinks, with tall grasses and wildflowers swaying in the breeze. The sky is painted with rich hues of orange and pink, casting long shadows across the landscape. A dynamic medium shot from a low angle, capturing the skeleton's animated dance.`,
+      `A dynamic action shot in the style of a professional skateboard magazine, featuring a young male longboarder accelerating downhill. He is fully focused, his expression intense and determined, carving through tight turns with precision. His longboard glides smoothly over the pavement, creating a blur of motion. He wears a black longboard shirt, blue jeans, and white sneakers, with a backpack slung over one shoulder. His hair flows behind him as he moves, and he grips the board tightly with both hands. The background shows a scenic urban street with blurred buildings and trees, hinting at a lively cityscape. The photo captures the moment just after he exits a turn, with a slight bounce in the board and a sense of speed and agility. A medium shot with a slightly elevated camera angle.`,
+      `A handheld shot following a young child running through a field of tall grass, capturing the spontaneity and playfulness of their movements. The child has curly brown hair and a mischievous smile, arms swinging freely as they sprint across the green expanse. Their small feet kick up bits of grass and dirt, creating a trail behind them. The background features a blurred landscape with rolling hills and scattered wildflowers, bathed in warm sunlight. The photo has a natural, documentary-style quality, emphasizing the dynamic motion and joy of the moment. A dynamic handheld shot from a slightly elevated angle, following the child's energetic run.`,
+      `An adorable kangaroo, dressed in a cute green dress with polka dots, is wearing a small sun hat perched on its head. The kangaroo takes a pleasant stroll through the bustling streets of Mumbai during a vibrant and colorful festival. The background is filled with lively festival-goers in traditional Indian attire, adorned with intricate henna designs and bright jewelry. The scene is filled with colorful decorations, vendors selling various items, and people dancing and singing. The kangaroo moves gracefully, hopping along the cobblestone streets, its tail swinging behind it. The camera angle captures the kangaroo from a slight overhead perspective, highlighting its joyful expression and the festive atmosphere. A medium shot with dynamic movement.`,
+      `A high-speed action shot of a cheetah in its natural habitat, sprinting at full speed while chasing its prey across the savanna. The cheetah's golden fur glistens under the bright African sun, and its muscular body is stretched out in a powerful run. Its sharp eyes focus intently on the fleeing antelope, and its distinctive black tear marks streak down its face. The background is a blurred landscape with tall grass swaying in the wind, and distant acacia trees. The cheetah's tail is raised high, and its paws leave deep prints in the soft earth. A dynamic mid-shot capturing the intense moment of pursuit.`,
+      `A surfer riding a massive wave, carving turns along the face. The wave towers above them, creating a tube. They navigate through it, water spraying around them. The wave crashes behind them as they ride toward the shore. Other surfers wait in the lineup. Cinematic water sports cinematography with slow motion, shot on waterproof camera with vibrant ocean colors.`,
+      `A sweeping aerial tracking shot following a single wild stallion galloping at full speed across a windswept Mongolian steppe at golden hour. Its mane whips in the wind, hooves kicking up rolling clouds of dust, muscles rippling beneath a sun-bronzed coat. The camera glides forward and slightly downward parallel to the horse, then rises and pulls ahead to reveal the rolling grasslands stretching to distant blue mountains. A low fast-moving aerial tracking shot with cinematic warmth and painterly light.`,
+      `A high-speed gimbal-stabilized chase shot following a single mountain biker bombing down a rocky alpine trail at dusk. The rider, in a black-and-red kit and full-face helmet, leans hard into a hairpin switchback, gravel and dust spraying from the rear wheel. Pine trees streak past in a green blur as the camera weaves and dips with the bike, holding tight on the rider's shoulders. The setting sun bleeds orange light through the treeline, flickering across the visor. A close-following chase shot with rapid lateral motion and dynamic frame instability.`,
+      `A side-tracking shot from a chase vehicle racing alongside a massive supercell thunderstorm rolling across the Kansas plains. Lightning forks down from the rotating wall cloud while a wedge tornado spins in the distance, kicking up a dark veil of dust. The camera tracks left to right at speed, fields of swaying wheat blurring in the foreground and the storm towering green-black above. Heavy rain begins to streak across the lens. A side-tracking shot from a fast-moving vehicle with raw, documentary realism.`,
+      `A handheld telephoto tracking shot following a lone zebra galloping along the muddy bank of the Mara River and leaping into the water during the great migration. Hooves pound the dirt, water explodes upward in muddy plumes as it lands, mane whipping in the equatorial sun. The camera pans rapidly to keep the zebra centered as it swims toward the far shore, black-and-white stripes streaming with water. A frenetic telephoto handheld shot with documentary urgency.`,
+    ];
+
+    // Bidirectional uses display prompts 1, 2, 4, 5  →  0-indexed [0, 1, 3, 4]
+    const BIDIR_PROMPT_INDICES = [0, 1, 3, 4];
+
+    // Text-to-3DGS prompts keyed by pair id (data-gs-pair).
+    // Note: video filenames are 0-indexed (prompt_NN), while the prompt
+    // text file is 1-indexed, so each pair maps to line (NN+1).
+    const GS_PROMPTS = {
+      "08": `A rocky shoreline with tall cliffs and a calm ocean is featured. The terrain consists of brown to gray rocks, while small patches of green vegetation are scattered throughout the area. A pale blue sky overhead suggests it's daytime.`,
+      "09": `The image is of a sunny street in an urban area, lined with tall buildings and parked cars.`,
+      "12": `An empty asphalt road stretches straight ahead, lined with tall trees on either side. The sky is clear and blue above a tranquil scene.`,
+      "13": `The image is a daytime view of a suburban street with parked cars and houses on one side, and trees in the background. The sky appears clear, suggesting good weather conditions. There are no visible shadows, indicating that it might be either morning or afternoon.`,
+    };
+    // Pairs grouped by visual row: 2 pairs per row in the 4-col grid
+    const GS_ROWS = [["08", "09"], ["12", "13"]];
+
+    // Build a single prompt-toggle UI block.
+    function makePromptBlock(label, fullText) {
+      const wrap = document.createElement("div");
+      wrap.className = "prompt-wrap";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "prompt-toggle";
+      btn.setAttribute("aria-expanded", "false");
+      btn.innerHTML =
+        `<span class="label"></span><span class="chevron">▾</span>`;
+      btn.querySelector(".label").textContent = label;
+
+      const panel = document.createElement("div");
+      panel.className = "prompt-panel";
+      panel.textContent = fullText;
+
+      btn.addEventListener("click", () => {
+        const open = panel.classList.toggle("open");
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+
+      wrap.appendChild(btn);
+      wrap.appendChild(panel);
+      return wrap;
+    }
+
+    // Attach prompt toggles under each showcase video.
+    function attachShowcasePrompts() {
+      document
+        .querySelectorAll("#long-form-30s .video-item, #samples-16s .video-item, #samples-hunyuan-30s .video-item")
+        .forEach(item => {
+          const src = item.querySelector("source")?.getAttribute("src");
+          const text = SHOWCASE_PROMPTS[src];
+          if (!text) return; // skip videos without a prompt
+          item.appendChild(makePromptBlock("Show prompt", text));
+        });
+    }
+
+    // Build a row-prompt header for comparison grids.
+    // The displayNum argument is accepted but not shown in the label
+    // (we don't surface prompt numbering in the UI).
+    function makeRowPromptHeader(displayNum, fullText) {
+      const header = document.createElement("div");
+      header.className = "row-prompt-header";
+      const teaser = fullText.length > 90 ? fullText.slice(0, 90) + "…" : fullText;
+      const block = makePromptBlock(teaser, fullText);
+      header.appendChild(block);
+      return header;
+    }
+
+    // Inject prompt toggles below each row of Text-to-3DGS pairs.
+    // Each row contains multiple pairs side by side (4-col grid).
+    function attachGsRowPrompts() {
+      const grid = document.getElementById("gs-grid");
+      if (!grid) return;
+      // Iterate rows from last to first so DOM positions remain stable.
+      for (let r = GS_ROWS.length - 1; r >= 0; r--) {
+        const row = GS_ROWS[r];
+        const lastPid = row[row.length - 1];
+        const anchor = grid.querySelector(
+          `.gs-video-wrap[data-gs-role="ours"][data-gs-pair="${lastPid}"]`
+        );
+        if (!anchor) continue;
+        // Insert headers in reverse so DOM order ends up [pair0, pair1, ...]
+        for (let i = row.length - 1; i >= 0; i--) {
+          const pid = row[i];
+          const text = GS_PROMPTS[pid];
+          if (!text) continue;
+          const displayNum = parseInt(pid, 10);
+          const header = makeRowPromptHeader(displayNum, text);
+          grid.insertBefore(header, anchor.nextSibling);
+        }
+      }
+    }
+
+    // Inject row-prompt headers into the bidirectional grid (below each row).
+    function attachBidirRowPrompts() {
+      const grid = document.querySelector(
+        "#comparison-bidirectional .comparison-grid-3col"
+      );
+      if (!grid) return;
+      const items = Array.from(grid.querySelectorAll(".video-item"));
+      // Bidirectional grid has 3 cols; videos are in groups of 3 per row.
+      // Insert the prompt below the row (after the last video of that row).
+      for (let row = BIDIR_PROMPT_INDICES.length - 1; row >= 0; row--) {
+        const promptIdx = BIDIR_PROMPT_INDICES[row];
+        const text = COMPARISON_PROMPTS[promptIdx];
+        if (!text) continue;
+        const lastOfRow = items[row * 3 + 2];
+        if (!lastOfRow) continue;
+        const header = makeRowPromptHeader(promptIdx + 1, text);
+        grid.insertBefore(header, lastOfRow.nextSibling);
+      }
+    }
+
+    function unmountArVideos(grid) {
+      // Pause and fully unload media so frame buffers / network state are
+      // released. Calling load() after src removal is the canonical way
+      // to drop a media resource per HTML spec.
+      grid.querySelectorAll(".video-item, .row-prompt-header").forEach(item => {
+        const v = item.querySelector("video");
+        if (v) {
+          try { v.pause(); } catch (e) {}
+          if (lazyObserver) {
+            try { lazyObserver.unobserve(v); } catch (e) {}
+          }
+          const src = v.querySelector("source");
+          if (src) src.removeAttribute("src");
+          v.removeAttribute("src");
+          try { v.load(); } catch (e) {}
+        }
+        item.remove();
+      });
+    }
+
+    function renderArPage(pageIdx) {
+      const grid = document.getElementById("ar-grid");
+      if (!grid) return;
+      arCurrentPage = pageIdx;
+      unmountArVideos(grid);
+
+      const indices = AR_PAGES[pageIdx];
+      const frag = document.createDocumentFragment();
+      for (const promptIdx of indices) {
+        // 6 videos for this prompt
+        for (const pathFn of AR_MODELS) {
+          const item = document.createElement("div");
+          item.className = "video-item";
+          const src = pathFn(promptIdx);
+          const poster = src.replace(/\.mp4$/, ".jpg");
+          item.innerHTML =
+            `<video muted loop playsinline preload="none" poster="${poster}">` +
+            `<source src="${src}" type="video/mp4"></video>`;
+          frag.appendChild(item);
+        }
+        // Row header with prompt (below videos)
+        const promptText = COMPARISON_PROMPTS[promptIdx];
+        if (promptText) {
+          frag.appendChild(makeRowPromptHeader(promptIdx + 1, promptText));
+        }
+      }
+      grid.appendChild(frag);
+
+      // Hook the new videos into the lazy observer (if it's already up).
+      if (lazyObserver) {
+        grid.querySelectorAll("video").forEach(v => lazyObserver.observe(v));
+      }
+
+      // Update nav UI
+      const indicator = document.getElementById("ar-page-indicator");
+      const prev = document.getElementById("ar-prev");
+      const next = document.getElementById("ar-next");
+      if (indicator) {
+        const start = indices[0] + 1;
+        const end = indices[indices.length - 1] + 1;
+        indicator.textContent =
+          start === end
+            ? `Prompt ${start} of 10`
+            : `Prompts ${start}–${end} of 10`;
+      }
+      if (prev) prev.disabled = arCurrentPage === 0;
+      if (next) next.disabled = arCurrentPage === AR_PAGES.length - 1;
+    }
+
+    // Initial render (page 0). lazyAutoplay below will pick the videos up
+    // via querySelectorAll on its first run.
+    renderArPage(0);
+
+    // Wire up nav buttons
+    (function setupArNav() {
+      const prev = document.getElementById("ar-prev");
+      const next = document.getElementById("ar-next");
+      if (!prev || !next) return;
+      prev.addEventListener("click", () => {
+        if (arCurrentPage > 0) renderArPage(arCurrentPage - 1);
+      });
+      next.addEventListener("click", () => {
+        if (arCurrentPage < AR_PAGES.length - 1) renderArPage(arCurrentPage + 1);
+      });
+    })();
+
+    // Attach prompt toggles to showcase videos and bidirectional rows.
+    attachShowcasePrompts();
+    attachBidirRowPrompts();
+    attachGsRowPrompts();
+
+    // ── Text-to-3DGS pair sync + "Out of frames" overlay ────────────
+    (function setupGsPairs() {
+      const wraps = document.querySelectorAll(
+        "#application-3dgs .gs-video-wrap"
+      );
+      if (!wraps.length) return;
+
+      // Group wraps by pair id
+      const pairs = {};
+      wraps.forEach(w => {
+        const id = w.dataset.gsPair;
+        if (!pairs[id]) pairs[id] = {};
+        pairs[id][w.dataset.gsRole] = w;
+      });
+
+      for (const id of Object.keys(pairs)) {
+        const baselineWrap = pairs[id].baseline;
+        const oursWrap = pairs[id].ours;
+        if (!baselineWrap || !oursWrap) continue;
+        const bv = baselineWrap.querySelector("video");
+        const ov = oursWrap.querySelector("video");
+        if (!bv || !ov) continue;
+
+        // Baseline finishes (shorter) → fade-grey overlay
+        bv.addEventListener("ended", () => {
+          baselineWrap.classList.add("depleted");
+        });
+
+        // Ours finishes (longer) → reset and replay both in sync
+        ov.addEventListener("ended", () => {
+          baselineWrap.classList.remove("depleted");
+          try { bv.currentTime = 0; } catch (e) {}
+          try { ov.currentTime = 0; } catch (e) {}
+          bv.play().catch(() => {});
+          ov.play().catch(() => {});
+        });
+
+        // Pair-level visibility: play together when in view, pause when out.
+        if ("IntersectionObserver" in window) {
+          const obs = new IntersectionObserver(entries => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                if (bv.paused && ov.paused) {
+                  // Fresh restart only if both are paused (avoids interrupting mid-cycle)
+                  baselineWrap.classList.remove("depleted");
+                  try { bv.currentTime = 0; } catch (err) {}
+                  try { ov.currentTime = 0; } catch (err) {}
+                  bv.play().catch(() => {});
+                  ov.play().catch(() => {});
+                }
+              } else {
+                bv.pause();
+                ov.pause();
+              }
+            }
+          }, { threshold: 0.1 });
+          obs.observe(baselineWrap);
+          obs.observe(oursWrap);
+        } else {
+          bv.play().catch(() => {});
+          ov.play().catch(() => {});
+        }
+      }
+    })();
+
+    // ── Lazy autoplay: only play videos when scrolled into view ─────
+    (function lazyAutoplay() {
+      // AR / comparison videos MUST be IO-driven (preload="none", no autoplay)
+      const mustLazy = Array.from(
+        document.querySelectorAll(".no-audio-section video[preload='none']")
+      );
+      // Text-to-3DGS pairs are managed by setupGsPairs() — exclude here
+      // so the two observers don't fight over play/pause.
+      const gsVideos = Array.from(
+        document.querySelectorAll("#application-3dgs video")
+      );
+      // Other videos use autoplay; optionally pause when offscreen.
+      const autoplayVideos = PAUSE_OFFSCREEN_VIDEOS
+        ? Array.from(document.querySelectorAll("video")).filter(
+            v => !mustLazy.includes(v) && !gsVideos.includes(v)
+          )
+        : [];
+      const observed = [...mustLazy, ...autoplayVideos];
+      if (observed.length === 0) return;
+
+      // Strip the `autoplay` attribute on managed videos so IO is the
+      // single source of truth for play/pause — otherwise the browser's
+      // own autoplay logic re-fires and overrides our pause() calls.
+      autoplayVideos.forEach(v => v.removeAttribute("autoplay"));
+
+      if (!("IntersectionObserver" in window)) {
+        observed.forEach(v => v.play().catch(() => {}));
+        return;
+      }
+      const obs = new IntersectionObserver(entries => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.play().catch(() => {});
+          } else {
+            e.target.pause();
+          }
+        }
+      }, { threshold: 0.05 });
+      lazyObserver = obs; // exposed so renderArPage can register new videos
+
+      // Defer observation to next tick: gives the browser a moment to
+      // finish layout so initial IO callbacks don't see stale rects.
+      setTimeout(() => observed.forEach(v => obs.observe(v)), 50);
+    })();
+
+    // ── Click any video to unmute it; auto-mute the others ───────────
+    // Exclude videos inside any .no-audio-section (comparison sections).
+    const noAudioSections = Array.from(
+      document.querySelectorAll(".no-audio-section")
+    );
+    const allVideos = Array.from(document.querySelectorAll("video"))
+      .filter(v => !noAudioSections.some(sec => sec.contains(v)));
+
+    // Inject mute/unmute status icons into each .video-item
+    function makeStatusIcon(video) {
+      const status = document.createElement("div");
+      status.className = "audio-status muted";
+      status.innerHTML = '<i class="fas fa-volume-xmark"></i>';
+      video.parentElement.appendChild(status);
+      video._statusEl = status;
+    }
+
+    function refreshStatusIcon(video) {
+      const el = video._statusEl;
+      if (!el) return;
+      if (video.muted) {
+        el.classList.remove("unmuted");
+        el.classList.add("muted");
+        el.innerHTML = '<i class="fas fa-volume-xmark"></i>';
+      } else {
+        el.classList.remove("muted");
+        el.classList.add("unmuted");
+        el.innerHTML = '<i class="fas fa-volume-high"></i>';
+      }
+    }
+
+    allVideos.forEach(v => {
+      makeStatusIcon(v);
+      refreshStatusIcon(v);
+      v.addEventListener("click", () => {
+        if (v.muted) {
+          allVideos.forEach(other => {
+            if (other !== v) {
+              other.muted = true;
+              other.classList.remove("audio-active");
+              refreshStatusIcon(other);
+            }
+          });
+          v.muted = false;
+          v.classList.add("audio-active");
+        } else {
+          v.muted = true;
+          v.classList.remove("audio-active");
+        }
+        refreshStatusIcon(v);
+      });
+    });
+  </script>
+
+</body></html>
