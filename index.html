@@ -9,6 +9,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Work+Sans&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
+          onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\(', right: '\\)', display: false}]});"></script>
 
 
   <style>
@@ -115,6 +119,35 @@
       margin: 0 auto;
     }
     /* 3-column comparison grid (Riflex / Ultravico / Ours) */
+    /* Interpolation (left half) | AR continuation (right half): 4 columns; each half is a subgrid so rows line up */
+    .ia-grid {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(7, auto);
+      gap: 10px 24px; padding: 12px 20px 20px; max-width: 1500px; margin: 0 auto; position: relative; box-sizing: border-box;
+    }
+    .ia-grid::before { content: ""; position: absolute; top: 12px; bottom: 20px; left: 50%; border-left: 1px solid #ddd; }
+    .ia-half {
+      grid-column: span 2; grid-row: span 7; display: grid;
+      grid-template-columns: subgrid; grid-template-rows: subgrid; row-gap: 10px;
+    }
+    .ia-half > * { min-width: 0; }
+    #interpolation .katex-display { margin: 0.6em 0; }
+    #interpolation p b, #ode-sde p b:not(.plain) { color: #1a1a1a; background: #ffe680; padding: 0 3px; border-radius: 3px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+    .ia-title { grid-column: 1 / -1; text-align: center; font-size: 24px; font-weight: 700; color: #333; }
+    .ia-desc { grid-column: 1 / -1; text-align: center; font-size: 15px; color: #666; }
+    .ia-grid .col-label { font-size: 18px; padding: 4px 0 0; }
+    .ia-grid video { width: 100%; display: block; border-radius: 8px; }
+    .ia-grid .ia-pair { grid-column: 1 / -1; }   /* Measurement | Ours are one video file, so they cannot drift apart */
+    .ia-grid .row-prompt-header { grid-column: 1 / -1; margin: 0 0 8px; align-self: start; }
+    @media (max-width: 900px) {
+      .ia-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; padding: 8px 10px 14px; }
+      .ia-grid::before { display: none; }
+      .ia-half:last-child { margin-top: 18px; padding-top: 14px; border-top: 1px solid #ddd; }
+    }
+    .speed-bar { display: flex; justify-content: center; gap: 8px; margin: 2px 0 10px; }
+    .speed-bar button { font: inherit; font-size: 14px; padding: 4px 14px; border: 1px solid #d6d6d6; background: #fff; color: #444; border-radius: 999px; cursor: pointer; }
+    .speed-bar button:hover { border-color: #b0b0b0; }
+    .speed-bar button.active { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
+    #ode-sde .comparison-grid-3col video { width: 100%; display: block; border-radius: 8px; }
     .comparison-grid-3col {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -790,6 +823,124 @@
       </div>
     </div>
 
+    <!-- Section: sampler comparison. Ours = same videos as the bidirectional comparison (baseline_comparison/ours/05 cheetah, /02 longboard). Speed buttons set playbackRate on every video in this section; default 2x. Full ODE = no re-noising, Euler on fused x0; Full SDE = re-noising (eta 1) on all 30 steps. Full ODE/SDE seed 42. -->
+    <div class="section no-audio-section" id="ode-sde">
+      <div class="section-title">Comparison of Samplers: Full ODE and Full SDE</div>
+      <p style="width: 92%; max-width: 1150px; text-align: center; font-size: 16px; line-height: 1.8; margin: 0 auto 0.8em; color: #444;">
+        30-second generation with the same model and the same fusion, changing only the sampler. All use <b class="plain">Wan2.1 (1.3B)</b>.
+        <br>
+        Full ODE keeps each chunk sharp, but the content breaks between chunks: the scene and the subject <b>jump in the middle of the video</b>.
+        <br>
+        Full SDE stays consistent across chunks, but re-noising at every step <b>washes out high-frequency detail and leaves the video blurry</b>.
+        <br>
+        FlowLong gives <b>consistent content and sharp detail at once</b>.
+      </p>
+
+      <div class="speed-bar" data-target="#ode-sde video">
+        <button type="button" data-rate="1">1&times;</button>
+        <button type="button" data-rate="2">2&times;</button>
+        <button type="button" data-rate="4">4&times;</button>
+      </div>
+
+      <div class="comparison-grid-3col">
+        <div class="col-label">Full ODE</div>
+        <div class="col-label">Full SDE</div>
+        <div class="col-label ours"><span class="ours-pill">FlowLong</span> (Ours)</div>
+
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ode_sde/cheetah_ode_euler.jpg">
+            <source src="ode_sde/cheetah_ode_euler.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ode_sde/cheetah_sde.jpg">
+            <source src="ode_sde/cheetah_sde.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/ours/05/video_low.jpg">
+            <source src="baseline_comparison/ours/05/video_low.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="row-prompt-header ode-prompt" data-prompt="A high-speed action shot of a cheetah in its natural habitat, sprinting at full speed while chasing its prey across the savanna. The cheetah's golden fur glistens under the bright African sun, and its muscular body is stretched out in a powerful run. Its sharp eyes focus intently on the fleeing antelope, and its distinctive black tear marks streak down its face. The background is a blurred landscape with tall grass swaying in the wind, and distant acacia trees. The cheetah's tail is raised high, and its paws leave deep prints in the soft earth. A dynamic mid-shot capturing the intense moment of pursuit."></div>
+
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ode_sde/longboard_ode_euler.jpg">
+            <source src="ode_sde/longboard_ode_euler.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="ode_sde/longboard_sde.jpg">
+            <source src="ode_sde/longboard_sde.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="baseline_comparison/ours/02/video_low.jpg">
+            <source src="baseline_comparison/ours/02/video_low.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="row-prompt-header ode-prompt" data-prompt="A dynamic action shot in the style of a professional skateboard magazine, featuring a young male longboarder accelerating downhill. He is fully focused, his expression intense and determined, carving through tight turns with precision. His longboard glides smoothly over the pavement, creating a blur of motion. He wears a black longboard shirt, blue jeans, and white sneakers, with a backpack slung over one shoulder. His hair flows behind him as he moves, and he grips the board tightly with both hands. The background shows a scenic urban street with blurred buildings and trees, hinting at a lively cityscape. The photo captures the moment just after he exits a turn, with a slight bounce in the board and a sense of speed and agility. A medium shot with a slightly elevated camera angle."></div>
+      </div>
+    </div>
+
+    <!-- Section: interpolation (left half) and AR continuation (right half). Interpolation: 30 s from five 1 s observed clips; right column = lowest max-jump variant per prompt (ltx14: seam-aware window weights; mg074: overwrite only). AR: 61-frame prefix (3.8 s) continued to 30 s (demo014/demo004, a0.5, seed 42). Observation panels: green bar = observed frames, gray bar = frames to generate (last observed frame held and dimmed). -->
+    <div class="section no-audio-section" id="interpolation">
+      <div class="section-title">Applications: Long Video Interpolation and Video Extension</div>
+      <p style="width: 98%; max-width: 1320px; text-align: justify; text-align-last: center; text-wrap: pretty; font-size: 15.5px; line-height: 1.8; margin: 0 auto 0.8em; color: #444;">
+        FlowLong writes its <b>guidance loss as an inverse problem</b>, \(\tfrac12\lVert y - Ax\rVert^2\), where \(A\) selects observed frames, \(x\) is the current chunk's Tweedie estimate, and \(y\) is a measurement. Our main results take \(y\) from neighboring chunks' denoised estimates, but that choice is not required: a real video prefix gives autoregressive extension, and observed frames or clips give frame interpolation, so the same formulation covers both chunk synchronization and conditioning on real observations.
+        <br>
+        For <b>video extension</b> and <b>interpolation</b>, anchoring the generation to the low-frequency components of the observation substantially improves temporal consistency,
+        $$\ell_k(x;t)=\tfrac12\left(\lVert y - Ax\rVert^2+\lVert P_L(y)-P_L(x)\rVert^2\right),$$
+        where \(P_L\) extracts compatible low-frequency representations of the observation and the generated chunk, pulling the generation toward the observed low-frequency content.
+      </p>
+
+      <div class="speed-bar" data-target="#interpolation video">
+        <button type="button" data-rate="1">1&times;</button>
+        <button type="button" data-rate="2">2&times;</button>
+        <button type="button" data-rate="4">4&times;</button>
+      </div>
+
+      <div class="ia-grid">
+        <div class="ia-half">
+          <div class="ia-title">Video interpolation</div>
+          <div class="ia-desc">Five 1-second clips are observed; a 30-second video connecting them is generated with <b>Wan2.1 (1.3B)</b>. A low-frequency measurement of the observations is added as a further regularizer.</div>
+          <div class="col-label">Measurement</div>
+          <div class="col-label ours">Ours (30 s)</div>
+          <div class="video-item ia-pair">
+            <video muted autoplay loop playsinline preload="none" poster="interpolation/ltx14_pair.jpg">
+              <source src="interpolation/ltx14_pair.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="row-prompt-header ia-prompt" data-prompt="A flamenco dancer stamping and turning in a continuous rhythmic pattern on a wooden stage. She wears a fitted black dress with a ruffled red train that swirls with each spin. Her heels strike the wooden floor in rapid staccato bursts, and her arms sweep upward in controlled arcs. Her expression is fierce and focused. A single warm spotlight follows her on the otherwise dark stage. Sweat glistens on her brow as she maintains the relentless rhythm. A medium shot capturing her full body and the swirling dress."></div>
+          <div class="video-item ia-pair">
+            <video muted autoplay loop playsinline preload="none" poster="interpolation/mg074_pair.jpg">
+              <source src="interpolation/mg074_pair.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="row-prompt-header ia-prompt" data-prompt="A giant Spinosaurus emerges from the misty jungle, its sail-like spines quivering as it bellows a deafening roar to announce its presence."></div>
+        </div>
+
+        <div class="ia-half">
+          <div class="ia-title">Video extension</div>
+          <div class="ia-desc">The first 61 frames (3.8 s) are observed; the video is continued autoregressively to 30 seconds. A low-frequency measurement of the observed prefix is added as a further regularizer.</div>
+          <div class="col-label">Measurement</div>
+          <div class="col-label ours">Ours (30 s)</div>
+          <div class="video-item ia-pair">
+            <video muted autoplay loop playsinline preload="none" poster="extension/demo014_pair.jpg">
+              <source src="extension/demo014_pair.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="row-prompt-header ia-prompt" data-prompt="A sea turtle swims gracefully over a vibrant coral reef, sunlight rippling through the clear water."></div>
+          <div class="video-item ia-pair">
+            <video muted autoplay loop playsinline preload="none" poster="extension/demo004_pair.jpg">
+              <source src="extension/demo004_pair.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="row-prompt-header ia-prompt" data-prompt="A sailboat cuts through deep blue ocean waves under a bright sky, white spray rising from the bow."></div>
+        </div>
+      </div>
+    </div>
+
     <br><br>
   </div>
 
@@ -1073,6 +1224,30 @@
     attachShowcasePrompts();
     attachBidirRowPrompts();
     attachGsRowPrompts();
+    // Interpolation | AR section: same collapsible prompt toggle, placed below each row
+    document.querySelectorAll("#interpolation .ia-prompt, #ode-sde .ode-prompt").forEach(el => {
+      const text = el.dataset.prompt || "[prompt to be added]";
+      const teaser = text.length > 90 ? text.slice(0, 90) + "\u2026" : text;
+      el.appendChild(makePromptBlock(teaser, text));
+    });
+
+    // 1x / 2x / 4x playback-speed buttons (default 2x). Each bar drives the videos its data-target selects.
+    document.querySelectorAll(".speed-bar").forEach(bar => {
+      const videos = () => document.querySelectorAll(bar.dataset.target);
+      let rate = 2;
+      const apply = () => {
+        videos().forEach(v => { v.playbackRate = rate; });
+        bar.querySelectorAll("button").forEach(b => {
+          b.classList.toggle("active", Number(b.dataset.rate) === rate);
+        });
+      };
+      bar.querySelectorAll("button").forEach(b => {
+        b.addEventListener("click", () => { rate = Number(b.dataset.rate); apply(); });
+      });
+      // A video resets playbackRate when its source loads, so re-apply then too.
+      videos().forEach(v => v.addEventListener("loadedmetadata", () => { v.playbackRate = rate; }));
+      apply();
+    });
 
     // ── Text-to-3DGS pair sync + "Out of frames" overlay ────────────
     (function setupGsPairs() {
