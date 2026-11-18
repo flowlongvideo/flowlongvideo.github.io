@@ -144,6 +144,12 @@
       .ia-grid::before { display: none; }
       .ia-title.ia-second { margin-top: 18px; padding-top: 14px; border-top: 1px solid #ddd; }
     }
+    /* Alternative guidance loss: one combined video per row (Interpolation | Latent flow loss) */
+    .fl-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 12px 20px 20px; max-width: 1100px; margin: 0 auto; box-sizing: border-box; }
+    .fl-grid > * { min-width: 0; }
+    .fl-grid .col-label { font-size: 18px; padding: 4px 0 0; }
+    .fl-grid video { width: 100%; display: block; border-radius: 8px; }
+    .fl-grid .row-prompt-header { grid-column: auto; margin: 0 0 8px; }
     .speed-bar { display: flex; justify-content: center; gap: 8px; margin: 2px 0 10px; }
     .speed-bar button { font: inherit; font-size: 14px; padding: 4px 14px; border: 1px solid #d6d6d6; background: #fff; color: #444; border-radius: 999px; cursor: pointer; }
     .speed-bar button:hover { border-color: #b0b0b0; }
@@ -944,6 +950,35 @@
       </div>
     </div>
 
+    <!-- Section: alternative guidance loss. Left half of each video = default Tweedie matching (linear interpolation of latent values; same videos as baseline_comparison/ours/04 and /09), right half = latent optical-flow loss. Both halves are one file, so they stay in sync. -->
+    <div class="section no-audio-section" id="flow-loss">
+      <div class="section-title">Alternative Guidance Loss: Latent Optical Flow</div>
+      <p style="width: 92%; max-width: 1150px; text-align: center; font-size: 16px; line-height: 1.8; margin: 0 auto 0.8em; color: #444;">
+        30-second generation with two guidance losses on <b class="plain">Wan2.1 (1.3B)</b>.
+        <br>
+        Interpolation: the default loss, which matches the latent values of neighboring chunks. Latent flow loss: matches the latent optical flow of neighboring chunks, with no interpolation of latent values.
+      </p>
+
+      <div class="fl-grid">
+        <div class="ia-labels">
+          <div class="col-label">Interpolation</div>
+          <div class="col-label ours">Latent flow loss</div>
+        </div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="flow_loss/kangaroo_pair.jpg">
+            <source src="flow_loss/kangaroo_pair.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="row-prompt-header fl-prompt" data-prompt="An adorable kangaroo, dressed in a cute green dress with polka dots, is wearing a small sun hat perched on its head. The kangaroo takes a pleasant stroll through the bustling streets of Mumbai during a vibrant and colorful festival. The background is filled with lively festival-goers in traditional Indian attire, adorned with intricate henna designs and bright jewelry. The scene is filled with colorful decorations, vendors selling various items, and people dancing and singing. The kangaroo moves gracefully, hopping along the cobblestone streets, its tail swinging behind it. The camera angle captures the kangaroo from a slight overhead perspective, highlighting its joyful expression and the festive atmosphere. A medium shot with dynamic movement."></div>
+        <div class="video-item">
+          <video muted autoplay loop playsinline preload="none" poster="flow_loss/storm_pair.jpg">
+            <source src="flow_loss/storm_pair.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="row-prompt-header fl-prompt" data-prompt="A side-tracking shot from a chase vehicle racing alongside a massive supercell thunderstorm rolling across the Kansas plains. Lightning forks down from the rotating wall cloud while a wedge tornado spins in the distance, kicking up a dark veil of dust. The camera tracks left to right at speed, fields of swaying wheat blurring in the foreground and the storm towering green-black above. Heavy rain begins to streak across the lens. A side-tracking shot from a fast-moving vehicle with raw, documentary realism."></div>
+      </div>
+    </div>
+
     <br><br>
   </div>
 
@@ -1228,7 +1263,7 @@
     attachBidirRowPrompts();
     attachGsRowPrompts();
     // Interpolation | AR section: same collapsible prompt toggle, placed below each row
-    document.querySelectorAll("#interpolation .ia-prompt, #ode-sde .ode-prompt").forEach(el => {
+    document.querySelectorAll("#interpolation .ia-prompt, #ode-sde .ode-prompt, #flow-loss .fl-prompt").forEach(el => {
       const text = el.dataset.prompt || "[prompt to be added]";
       const teaser = text.length > 90 ? text.slice(0, 90) + "\u2026" : text;
       el.appendChild(makePromptBlock(teaser, text));
